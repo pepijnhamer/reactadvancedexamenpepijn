@@ -1,8 +1,8 @@
 import { Tag } from "@chakra-ui/react";
 import { useContext } from "react";
-import { CategoryContext } from "./CategoryContext";
+import { CategoryContext } from "./Category";
 
-export const EventCard = ({ event }) => {
+export const EventItem = ({ event }) => {
   const { categories } = useContext(CategoryContext);
 
   return (
@@ -12,7 +12,7 @@ export const EventCard = ({ event }) => {
       (event.image.endsWith(".jpg") || event.image.endsWith(".jpeg")) ? (
         <img src={event.image} />
       ) : (
-        <img src="https://assets-global.website-files.com/64022de562115a8189fe542a/6417b40028f930d9c3a3c829_Why-Using-A-Smiley-Face-Survey-Can-Boost-Your-Response-Rate.jpeg" />
+        <img src="https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2018/05/Gradient-Roundup-Illustrator-02.jpg" />
       )}
       <h3>{event.title}</h3>
       <div className="categories">

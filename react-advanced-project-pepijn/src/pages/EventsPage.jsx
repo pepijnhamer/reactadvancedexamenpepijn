@@ -9,10 +9,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useLoaderData, Link } from "react-router-dom";
-import { EventCard } from "../components/EventCard";
-import { SearchBar } from "../components/SearchBar";
-import { CategoryContext } from "../components/CategoryContext";
+import { EventItem } from "../components/EventItem";
+import { CategoryContext } from "../components/Category";
 import { EventForm } from "../components/EventForm";
+import { SearchBar } from "../components/SearchBar";
 
 export const loader = async () => {
   const events = await fetch("http://localhost:3000/events");
@@ -175,7 +175,7 @@ export const EventsPage = () => {
       <div className="eventgrid">
         {filteredEvents.map((event) => (
           <Link key={event.id} to={`/events/${event.id}`}>
-            <EventCard event={event}></EventCard>
+            <EventItem event={event}></EventItem>
           </Link>
         ))}
       </div>

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import {
   Button,
   Tag,
@@ -9,8 +9,8 @@ import {
   ModalCloseButton,
   useToast,
 } from "@chakra-ui/react";
-import { CategoryContext } from "../components/CategoryContext";
-import { UserContext } from "../components/UserContext";
+import { CategoryContext } from "../components/Category";
+import { UserContext } from "../components/User";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { useDisclosure } from "@chakra-ui/react";
 import { EventForm } from "../components/EventForm";
@@ -38,17 +38,23 @@ export const EventPage = () => {
     ? users.find((user) => user.id === eventDetails.createdBy)
     : null;
 
+  useEffect(() => {
+    if (eventDetails && eventDetails.categoryIds) {
+      setCheckedItems(eventDetails.categoryIds);
+    }
+  }, [eventDetails]);
+
   const handleCheckedItemsUpdate = (checkedItems) => {
     setCheckedItems(checkedItems);
-    console.log(checkedItems);
   };
 
-  // Submitter
+  // Event submitter
   const handleEditSubmit = async (formData) => {
     setIsLoading(true);
 
     try {
       formData.categoryIds = checkedItems;
+      console.log(checkedItems, "submitter edit checked items");
 
       const update = await fetch(
         `http://localhost:3000/events/${formData.id}`,
@@ -60,6 +66,7 @@ export const EventPage = () => {
           body: JSON.stringify(formData),
         }
       );
+
       if (update.ok) {
         toast({
           title: "Event updated.",
@@ -69,12 +76,14 @@ export const EventPage = () => {
           isClosable: true,
         });
         onClose();
+      } else {
+        throw new Error("Failed to update event");
       }
     } catch (error) {
       console.error("Error updating event:", error);
       toast({
         title: "Error",
-        description: "Failed to update event.",
+        description: "Failed to update event",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -84,7 +93,7 @@ export const EventPage = () => {
     }
   };
 
-  // Deleter
+  // Event deleter
   const handleDelete = async () => {
     try {
       const response = await fetch(
@@ -103,10 +112,10 @@ export const EventPage = () => {
       onClose();
       navigate("/");
     } catch (error) {
-      console.error("Error updating event:", error);
+      console.error("Error deleting event:", error);
       toast({
         title: "Error",
-        description: `Failed to update event.`,
+        description: "Failed to delete event.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -114,7 +123,7 @@ export const EventPage = () => {
     }
   };
 
-  // Event Page
+  // Event page
   return (
     <>
       {isLoading ? (
@@ -126,12 +135,13 @@ export const EventPage = () => {
           <div className="eventinformation">
             <h1>{eventDetails.title}</h1>
             <div className="categories">
-              {eventDetails.categoryIds.map((id) => (
-                <Tag key={id}>
-                  {categories.find((category) => category.id === id)?.name ||
-                    `This is ${id}`}
-                </Tag>
-              ))}
+              {eventDetails.categoryIds &&
+                eventDetails.categoryIds.map((id) => (
+                  <Tag key={id}>
+                    {categories.find((category) => category.id === id)?.name ||
+                      `This is ${id}`}
+                  </Tag>
+                ))}
             </div>
             <p>{eventDetails.description}</p>
             <div className="timestamps">
@@ -156,26 +166,26 @@ export const EventPage = () => {
               Edit event
             </Button>
             <DeleteEvent onDelete={handleDelete} />
-            <Modal isOpen={isOpen} onClose={onClose}>
-              <ModalOverlay />
-              <ModalContent>
-                <h2>Edit event</h2>
-                <ModalBody>
-                  <EventForm
-                    initialValues={eventDetails}
-                    isLoading={isLoading}
-                    onSubmit={handleEditSubmit}
-                    onClose={onClose}
-                    updateCheckedItems={handleCheckedItemsUpdate}
-                  />
-                  <ModalCloseButton />
-                </ModalBody>
-              </ModalContent>
-            </Modal>
-            <div className="useritem">
-              <img src={createdByUser?.image} />
-              <h2>{createdByUser?.name}</h2>
-            </div>
+          </div>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <h2>Edit event</h2>
+              <ModalBody>
+                <EventForm
+                  initialValues={eventDetails}
+                  isLoading={isLoading}
+                  onSubmit={handleEditSubmit}
+                  onClose={onClose}
+                  updateCheckedItems={handleCheckedItemsUpdate}
+                />
+                <ModalCloseButton />
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+          <div className="useritem">
+            <img src={createdByUser?.image} alt="User" />
+            <h2>{createdByUser?.name}</h2>
           </div>
           <div className="eventbanner">
             {eventDetails.image !== "" &&
@@ -184,7 +194,7 @@ export const EventPage = () => {
               eventDetails.image.endsWith(".jpeg")) ? (
               <img src={eventDetails.image} />
             ) : (
-              <img src="https://assets-global.website-files.com/64022de562115a8189fe542a/6417b40028f930d9c3a3c829_Why-Using-A-Smiley-Face-Survey-Can-Boost-Your-Response-Rate.jpeg" />
+              <img src="https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2018/05/Gradient-Roundup-Illustrator-02.jpg" />
             )}
           </div>
         </div>

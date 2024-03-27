@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { Box, FormControl, Checkbox, Flex } from "@chakra-ui/react";
-import { CategoryContext } from "./CategoryContext";
-import { UserContext } from "./UserContext";
+import { CategoryContext } from "./Category";
+import { UserContext } from "./User";
 
 export const EventForm = ({
   initialValues,
@@ -43,7 +43,11 @@ export const EventForm = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     setCheckedItems(checkedItems);
-    onSubmit(formData);
+    onSubmit({
+      ...formData,
+      createdBy: parseInt(user),
+      categoryIds: checkedItems,
+    });
   };
 
   return (

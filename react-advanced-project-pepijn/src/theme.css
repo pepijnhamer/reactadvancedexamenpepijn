@@ -198,6 +198,9 @@ label {
 .item h1 {
   color: var(--white);
 }
+.eventbanner {
+  grid-column: 1 / -1;
+}
 .eventbanner img {
   width: 100%;
   object-fit: cover;

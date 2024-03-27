@@ -1,4 +1,3 @@
-//Search bar on top of page
 export const SearchBar = ({ searchTerm, onSearchChange }) => {
   return (
     <input
